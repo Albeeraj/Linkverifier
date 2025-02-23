@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing URL Detector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0d47a1, #2196f3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #container {
+            text-align: center;
+            padding: 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 450px;
+            width: 90%;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            width: 70%;
+            border: 2px solid #007BFF;
+            border-radius: 8px;
+            outline: none;
+            text-align: left;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 8px rgba(0, 91, 255, 0.5);
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        #loading {
+            display: none;
+            margin-top: 10px;
+            font-size: 16px;
+            color: #007BFF;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .safe {
+            color: green;
+        }
+
+        .phishing {
+            color: red;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+    <script>
+        function isValidURL(url) {
+            const urlPattern = /^(https?:\/\/)([\w.-]+)\.([a-z]{2,6})(\/[\w.-]*)*\/?$/;
+            return urlPattern.test(url);
+        }
+
+        async function checkURL() {
+            let url = document.getElementById("urlInput").value.trim();
+            let resultText = document.getElementById("result");
+            let loadingText = document.getElementById("loading");
+
+            if (!url || !isValidURL(url)) {
+                resultText.innerText = "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)";
+                resultText.className = "error";
+                return;
+            }
+
+            // Show loading text
+            loadingText.style.display = "block";
+            resultText.innerText = "";
+
+            let response = await fetch("http://127.0.0.1:8000/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url: url }),
+            });
+
+            let result = await response.json();
+            resultText.innerText = " Result: " + result.result;
+            resultText.className = result.result === "Phishing" ? "phishing" : "safe";
+
+            // Hide loading text
+            loadingText.style.display = "none";
+        }
+    </script>
+</head>
+<body>
+    <div id="container">
+        <h2><b> Link Verifier</b></h2>
+        <div class="input-container">
+            <input type="text" id="urlInput" placeholder="Enter URL here">
+            <button onclick="checkURL()">Check</button>
+        </div>
+        <p id="loading">Checking... ⏳</p>
+        <p id="result"></p>
+    </div>
+</body>
+</html>
