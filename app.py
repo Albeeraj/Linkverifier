@@ -12,6 +12,7 @@ except Exception as e:
     raise HTTPException(status_code=500, detail=f"Error loading model: {e}")
 
 # Function to extract features from a URL
+SAFE_DOMAINS = ["Linkverifier-2.onrender.com"] 
 def extract_features(url: str):
     features = {
         "Have_IP": 1 if "192." in url or "https://" not in url else 0,
