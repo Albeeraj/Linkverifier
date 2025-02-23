@@ -34,12 +34,18 @@ def extract_features(url: str):
     }
     return features
 
-# Prediction function
+# Prediction function with Safe List Check
 def predict_url(url: str):
+    # If the URL is in the safe list, return "Legitimate" immediately
+    if any(safe in url for safe in SAFE_DOMAINS):
+        return {"result": "Legitimate"}
+
+    # Extract features and predict
     features = extract_features(url)
     df = pd.DataFrame([features])
     prediction = model.predict(df)[0]
     return {"result": "Phishing" if prediction == 1 else "Legitimate"}
+
 
 # Serve the frontend (index.html)
 @app.get("/", response_class=HTMLResponse)
