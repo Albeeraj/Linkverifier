@@ -60,30 +60,30 @@ def serve_homepage():
 
 # API endpoint for prediction
 import re  # Import Regular Expressions for URL validation
-
 @app.post("/predict")
 def predict(data: dict):
     url = data.get("url", "").strip()
     
-    # ✅ Step 1: Validate URL format
+    # ✅ URL Validation
     url_pattern = re.compile(
         r'^(https?:\/\/)?'  # http:// or https:// (optional)
         r'([\da-z\.-]+)\.([a-z\.]{2,6})'  # Domain name
         r'([\/\w \.-]*)*\/?$'  # Path (optional)
     )
     if not url_pattern.match(url):
-        return {"result": "❌ Invalid URL Format"}  # ✅ Do NOT add invalid URLs to recent list
+        return {"result": "❌ Invalid URL Format"}
 
-    # ✅ Step 2: Perform phishing check
+    # ✅ Perform phishing check
     result = predict_url(url)
 
-    # ✅ Step 3: Store only valid URLs (only keep the last 10)
-    if result["result"] != "❌ Invalid URL Format":  # ✅ Ensure only valid results are stored
+    # ✅ Store only last 5 checked URLs (excluding invalid)
+    if result["result"] != "❌ Invalid URL Format":
         recent_urls.insert(0, {"url": url, "result": result["result"]})
-        if len(recent_urls) > 10:
+        if len(recent_urls) > 5:  # ✅ Now storing only the last 5 URLs
             recent_urls.pop()
 
     return result
+
 
 # API endpoint to get the last 10 checked URLs
 @app.get("/recent")

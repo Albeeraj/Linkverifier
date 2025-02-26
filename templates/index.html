@@ -134,56 +134,43 @@
     }
     </style>
     <script>
-        async function checkURL() {
-            let url = document.getElementById("urlInput").value.trim();
-            let resultText = document.getElementById("result");
-            let loadingText = document.getElementById("loading");
+    async function checkURL() {
+        let url = document.getElementById("urlInput").value.trim();
+        let resultText = document.getElementById("result");
+        let loadingText = document.getElementById("loading");
     
-            if (!url) {
-                resultText.innerText = "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)";
-                resultText.className = "error";
-                return;
-            }
-    
-            loadingText.style.display = "block";
-            resultText.innerText = "";
-    
-            let response = await fetch("https://linkverifier-2.onrender.com/predict", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ url: url }),
-            });
-    
-            let result = await response.json();
-            resultText.innerText = " Result: " + result.result;
-            if (result.result === "❌ Invalid URL Format") {
-        resultText.style.color = "black";  // ✅ Set text color to black
-    } else {
-            resultText.className = result.result === "Phishing" ? "phishing" : "safe";
-        }
-            loadingText.style.display = "none";
-    
-            // Refresh the recent URLs list
-            loadRecentURLs();
+        if (!url) {
+            resultText.innerText = "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)";
+            resultText.className = "error";
+            return;
         }
     
-        async function loadRecentURLs() {
-            let response = await fetch("https://linkverifier-2.onrender.com/recent");
-            let data = await response.json();
-            let recentList = document.getElementById("recent-list");
-            recentList.innerHTML = "";
+        loadingText.style.display = "block";
+        resultText.innerText = "";
     
-            data.recent_urls.forEach((entry) => {
-                let listItem = document.createElement("li");
-                listItem.innerHTML = `<strong>${entry.url}</strong>: <span class="${entry.result === "Phishing" ? "phishing" : "safe"}">${entry.result}</span>`;
-                recentList.appendChild(listItem);
-            });
+        let response = await fetch("https://linkverifier-2.onrender.com/predict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: url }),
+        });
+    
+        let result = await response.json();
+        resultText.innerText = " Result: " + result.result;
+    
+        if (result.result === "❌ Invalid URL Format") {
+            resultText.style.color = "black";  // ✅ Invalid URL in black
+        } else if (result.result === "Phishing") {
+            resultText.style.color = "red";  // ✅ Phishing in red
+        } else {
+            resultText.style.color = "green";  // ✅ Legitimate in green
         }
     
-        // Load recent URLs when the page loads
-        window.onload = loadRecentURLs;
-    </script>
+        loadingText.style.display = "none";
     
+        // Refresh the recent URLs list
+        loadRecentURLs();
+    }
+</script>
 </head>
 <body>
     <div id="container">
