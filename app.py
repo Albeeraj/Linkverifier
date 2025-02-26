@@ -71,13 +71,13 @@ def predict(data: dict):
         r'([\/\w \.-]*)*\/?$'  # Path (optional)
     )
     if not url_pattern.match(url):
-        return {"result": "❌ Invalid URL Format"}
+        return {"result": "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)"}
 
     # ✅ Perform phishing check
     result = predict_url(url)
 
     # ✅ Store only last 5 checked URLs (excluding invalid)
-    if result["result"] != "❌ Invalid URL Format":
+    if result["result"] != "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)":
         recent_urls.insert(0, {"url": url, "result": result["result"]})
         if len(recent_urls) > 5:  # ✅ Now storing only the last 5 URLs
             recent_urls.pop()

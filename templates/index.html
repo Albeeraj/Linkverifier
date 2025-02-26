@@ -138,25 +138,25 @@
         let url = document.getElementById("urlInput").value.trim();
         let resultText = document.getElementById("result");
         let loadingText = document.getElementById("loading");
-    
+
         if (!url) {
             resultText.innerText = "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)";
             resultText.className = "error";
             return;
         }
-    
+
         loadingText.style.display = "block";
         resultText.innerText = "";
-    
+
         let response = await fetch("https://linkverifier-2.onrender.com/predict", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ url: url }),
         });
-    
+
         let result = await response.json();
         resultText.innerText = " Result: " + result.result;
-    
+
         if (result.result === "❌ Invalid URL Format") {
             resultText.style.color = "black";  // ✅ Invalid URL in black
         } else if (result.result === "Phishing") {
@@ -164,12 +164,35 @@
         } else {
             resultText.style.color = "green";  // ✅ Legitimate in green
         }
-    
+
         loadingText.style.display = "none";
-    
-        // Refresh the recent URLs list
+
+        // ✅ Refresh the recent URLs list
         loadRecentURLs();
     }
+
+    // ✅ Fix: Properly Fetch and Display Recently Checked URLs
+    async function loadRecentURLs() {
+        try {
+            let response = await fetch("https://linkverifier-2.onrender.com/recent");
+            let data = await response.json();
+            let recentList = document.getElementById("recent-list");
+
+            recentList.innerHTML = ""; // Clear previous list
+
+            data.recent_urls.forEach((entry) => {
+                let listItem = document.createElement("li");
+                listItem.innerHTML = `<strong>${entry.url}</strong>: 
+                    <span class="${entry.result === "Phishing" ? "phishing" : "safe"}">${entry.result}</span>`;
+                recentList.appendChild(listItem);
+            });
+        } catch (error) {
+            console.error("Error fetching recent URLs:", error);
+        }
+    }
+
+    // ✅ Load recent URLs when the page loads
+    window.onload = loadRecentURLs;
 </script>
 </head>
 <body>
