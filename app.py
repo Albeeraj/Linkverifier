@@ -4,6 +4,8 @@ import joblib
 import pandas as pd
 
 app = FastAPI()
+recent_urls = []  # Stores the last 10 checked URLs
+
 
 # Load trained phishing detection model
 try:
@@ -62,7 +64,20 @@ def predict(data: dict):
     url = data.get("url", "")
     if not url:
         raise HTTPException(status_code=400, detail="No URL provided")
-    return predict_url(url)
+    
+    result = predict_url(url)
+
+    # Store recent URLs (only keep the last 10)
+    recent_urls.insert(0, {"url": url, "result": result["result"]})
+    if len(recent_urls) > 10:
+        recent_urls.pop()
+
+    return result
+# API endpoint to get the last 10 checked URLs
+@app.get("/recent")
+def get_recent():
+    return {"recent_urls": recent_urls}
+
 
 if __name__ == "__main__":
     import uvicorn
