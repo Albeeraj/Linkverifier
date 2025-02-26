@@ -6,177 +6,132 @@
     <title>Phishing URL Detector</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0d47a1, #2196f3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #0d47a1, #2196f3);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        flex-direction: column;  /* ✅ Ensures proper vertical alignment */
+    }
 
-        #container {
-            text-align: center;
-            padding: 30px;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            max-width: 450px;
-            width: 90%;
-            animation: fadeIn 0.5s ease-in-out;
-        }
+    #container {
+        text-align: center;
+        padding: 30px;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        max-width: 450px;
+        width: 90%;
+        animation: fadeIn 0.5s ease-in-out;
+        margin-bottom: 50px; /* ✅ Ensures a clear gap between checking and recent list */
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
 
-        h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
+    h2 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
 
-        .input-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+    .input-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
 
-        input[type="text"] {
-            padding: 12px;
-            width: 70%;
-            border: 2px solid #007BFF;
-            border-radius: 8px;
-            outline: none;
-            text-align: left;
-            font-size: 16px;
-            transition: 0.3s;
-        }
+    input[type="text"] {
+        padding: 12px;
+        width: 70%;
+        border: 2px solid #007BFF;
+        border-radius: 8px;
+        outline: none;
+        text-align: left;
+        font-size: 16px;
+        transition: 0.3s;
+    }
 
-        input[type="text"]:focus {
-            border-color: #0056b3;
-            box-shadow: 0 0 8px rgba(0, 91, 255, 0.5);
-        }
+    input[type="text"]:focus {
+        border-color: #0056b3;
+        box-shadow: 0 0 8px rgba(0, 91, 255, 0.5);
+    }
 
-        button {
-            padding: 12px 20px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: 0.3s;
-            position: relative;
-        }
+    button {
+        padding: 12px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+        position: relative;
+    }
 
-        button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
+    button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
 
-        #loading {
-            display: none;
-            margin-top: 10px;
-            font-size: 16px;
-            color: #007BFF;
-        }
+    #loading {
+        display: none;
+        margin-top: 10px;
+        font-size: 16px;
+        color: #007BFF;
+    }
 
-        #result {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
+    #result {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
 
-        .safe {
-            color: green;
-        }
+    .safe {
+        color: green;
+    }
 
-        .phishing {
-            color: red;
-        }
+    .phishing {
+        color: red;
+    }
 
-        .error {
-            color: red;
-        }
-        #recent-container {
-    margin-top: 20px;
-    text-align: left;
-    background: #f9f9f9;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
+    .error {
+        color: black; /* ✅ Changed "Invalid URL" to black */
+    }
 
-#recent-list {
-    list-style: none;
-    padding: 0;
-}
+    /* ✅ Ensures a clear gap between checking and recently checked section */
+    #recent-container {
+        margin-top: 50px; 
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        max-width: 450px;
+        width: 90%;
+    }
 
-#recent-list li {
-    padding: 5px;
-    font-size: 14px;
-    border-bottom: 1px solid #ddd;
-}
+    #recent-list {
+        list-style: none;
+        padding: 0;
+    }
 
-#recent-list li:last-child {
-    border-bottom: none;
-}
-#recent-container {
-    margin-top: 40px;  /* ✅ Increased spacing */
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-    text-align: center;
-}
+    #recent-list li {
+        padding: 8px;
+        font-size: 16px;
+        border-bottom: 1px solid #ddd;
+    }
 
-#recent-list {
-    list-style: none;
-    padding: 0;
-}
-
-#recent-list li {
-    padding: 8px;
-    font-size: 16px;
-    border-bottom: 1px solid #ddd;
-}
-
-#recent-list li:last-child {
-    border-bottom: none;
-}
-#container {
-    margin-bottom: 50px;  /* ✅ Adds a clear gap below the checking section */
-}
-
-#recent-container {
-    margin-top: 50px; /* ✅ Adds space between checking section and recent list */
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-    text-align: center;
-}
-
-#recent-list {
-    list-style: none;
-    padding: 0;
-}
-
-#recent-list li {
-    padding: 8px;
-    font-size: 16px;
-    border-bottom: 1px solid #ddd;
-}
-
-#recent-list li:last-child {
-    border-bottom: none;
-}
-
+    #recent-list li:last-child {
+        border-bottom: none;
+    }
     </style>
     <script>
         async function checkURL() {
@@ -241,14 +196,13 @@
         <p id="result"></p>
     </div>
 
-    <!-- ✅ Wrapper to push recent URLs to the bottom -->
-    <div id="wrapper">
-        <div id="recent-container">
-            <h3>Recently Checked URLs</h3>
-            <ul id="recent-list"></ul>
-        </div>
+    <!-- ✅ Added a new section for proper spacing -->
+    <div class="spacer"></div>
+
+    <!-- ✅ This will now appear BELOW the checking section with proper gap -->
+    <div id="recent-container">
+        <h3>Recently Checked URLs</h3>
+        <ul id="recent-list"></ul>
     </div>
 </body>
-
-
 </html>
