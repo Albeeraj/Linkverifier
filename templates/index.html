@@ -126,6 +126,29 @@
 #recent-list li:last-child {
     border-bottom: none;
 }
+#recent-container {
+    margin-top: 40px;  /* ✅ Increased spacing */
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+#recent-list {
+    list-style: none;
+    padding: 0;
+}
+
+#recent-list li {
+    padding: 8px;
+    font-size: 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+#recent-list li:last-child {
+    border-bottom: none;
+}
 
     </style>
     <script>
@@ -183,13 +206,15 @@
             <input type="text" id="urlInput" placeholder="Enter URL here">
             <button onclick="checkURL()">Check</button>
         </div>
-        <p id="loading">Checking... ⏳</p>
+        <p id="loading" style="display:none;">Checking... ⏳</p>
         <p id="result"></p>
     </div>
+
+    <!-- ✅ Added a clear gap between sections -->
     <div id="recent-container">
         <h3>Recently Checked URLs</h3>
         <ul id="recent-list"></ul>
     </div>
-    
 </body>
+
 </html>

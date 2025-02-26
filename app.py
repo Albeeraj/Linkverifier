@@ -59,20 +59,32 @@ def serve_homepage():
         raise HTTPException(status_code=500, detail=f"Error loading index.html: {e}")
 
 # API endpoint for prediction
+import re  # Import Regular Expressions for URL validation
+
 @app.post("/predict")
 def predict(data: dict):
-    url = data.get("url", "")
-    if not url:
-        raise HTTPException(status_code=400, detail="No URL provided")
+    url = data.get("url", "").strip()
     
+    # ✅ Step 1: Validate URL format
+    url_pattern = re.compile(
+        r'^(https?:\/\/)?'  # http:// or https:// (optional)
+        r'([\da-z\.-]+)\.([a-z\.]{2,6})'  # Domain name
+        r'([\/\w \.-]*)*\/?$'  # Path (optional)
+    )
+    if not url_pattern.match(url):
+        return {"result": "❌ Invalid URL Format"}  # ✅ Do NOT add invalid URLs to recent list
+
+    # ✅ Step 2: Perform phishing check
     result = predict_url(url)
 
-    # Store recent URLs (only keep the last 10)
-    recent_urls.insert(0, {"url": url, "result": result["result"]})
-    if len(recent_urls) > 10:
-        recent_urls.pop()
+    # ✅ Step 3: Store only valid URLs (only keep the last 10)
+    if result["result"] != "❌ Invalid URL Format":  # ✅ Ensure only valid results are stored
+        recent_urls.insert(0, {"url": url, "result": result["result"]})
+        if len(recent_urls) > 10:
+            recent_urls.pop()
 
     return result
+
 # API endpoint to get the last 10 checked URLs
 @app.get("/recent")
 def get_recent():
