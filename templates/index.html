@@ -149,6 +149,33 @@
 #recent-list li:last-child {
     border-bottom: none;
 }
+#container {
+    margin-bottom: 50px;  /* ✅ Adds a clear gap below the checking section */
+}
+
+#recent-container {
+    margin-top: 50px; /* ✅ Adds space between checking section and recent list */
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+#recent-list {
+    list-style: none;
+    padding: 0;
+}
+
+#recent-list li {
+    padding: 8px;
+    font-size: 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+#recent-list li:last-child {
+    border-bottom: none;
+}
 
     </style>
     <script>
@@ -174,7 +201,11 @@
     
             let result = await response.json();
             resultText.innerText = " Result: " + result.result;
+            if (result.result === "❌ Invalid URL Format") {
+        resultText.style.color = "black";  // ✅ Set text color to black
+    } else {
             resultText.className = result.result === "Phishing" ? "phishing" : "safe";
+        }
             loadingText.style.display = "none";
     
             // Refresh the recent URLs list
@@ -210,11 +241,14 @@
         <p id="result"></p>
     </div>
 
-    <!-- ✅ Added a clear gap between sections -->
-    <div id="recent-container">
-        <h3>Recently Checked URLs</h3>
-        <ul id="recent-list"></ul>
+    <!-- ✅ Wrapper to push recent URLs to the bottom -->
+    <div id="wrapper">
+        <div id="recent-container">
+            <h3>Recently Checked URLs</h3>
+            <ul id="recent-list"></ul>
+        </div>
     </div>
 </body>
+
 
 </html>
