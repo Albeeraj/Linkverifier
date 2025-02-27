@@ -135,64 +135,77 @@
     </style>
     <script>
     async function checkURL() {
-        let url = document.getElementById("urlInput").value.trim();
-        let resultText = document.getElementById("result");
-        let loadingText = document.getElementById("loading");
+    let url = document.getElementById("urlInput").value.trim();
+    let resultText = document.getElementById("result");
+    let loadingText = document.getElementById("loading");
 
-        if (!url) {
-            resultText.innerText = "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)";
-            resultText.className = "error";
-            return;
-        }
+    // Basic URL validation before making a request
+    if (!isValidURL(url)) {
+        resultText.innerText = "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)";
+        resultText.style.color = "red";  // ✅ Invalid URLs in black
+        resultText.className = "error";
+        return;
+    }
 
-        loadingText.style.display = "block";
-        resultText.innerText = "";
+    loadingText.style.display = "block";
+    resultText.innerText = "";
 
-        let response = await fetch("https://linkverifier-2.onrender.com/predict", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ url: url }),
-        });
+    let response = await fetch("https://linkverifier-2.onrender.com/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: url }),
+    });
 
-        let result = await response.json();
-        resultText.innerText = " Result: " + result.result;
+    let result = await response.json();
+    resultText.innerText = " Result: " + result.result;
 
-        if (result.result === "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)") {
-            resultText.style.color = "red";  // ✅ Invalid URL in black
-        } else if (result.result === "Phishing") {
-            resultText.style.color = "red";  // ✅ Phishing in red
-        } else {
-            resultText.style.color = "green";  // ✅ Legitimate in green
-        }
+    // ✅ Ensure color formatting is applied correctly
+    if (result.result === "Phishing") {
+        resultText.style.color = "red";  // Phishing in red
+    } else if (result.result === "Legitimate") {
+        resultText.style.color = "green";  // Legitimate in green
+    } else {
+        resultText.style.color = "red";  // Invalid URLs in black
+    }
 
-        loadingText.style.display = "none";
+    loadingText.style.display = "none";
 
-        // ✅ Refresh the recent URLs list
+    // ✅ Only add to recent URLs if valid
+    if (result.result !== "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)") {
         loadRecentURLs();
     }
+}
 
-    // ✅ Fix: Properly Fetch and Display Recently Checked URLs
-    async function loadRecentURLs() {
-        try {
-            let response = await fetch("https://linkverifier-2.onrender.com/recent");
-            let data = await response.json();
-            let recentList = document.getElementById("recent-list");
+// ✅ Helper function to validate URLs before sending
+function isValidURL(url) {
+    let pattern = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/i;
+    return pattern.test(url);
+}
 
-            recentList.innerHTML = ""; // Clear previous list
+// ✅ Properly fetch and display the last 5 recent URLs
+async function loadRecentURLs() {
+    try {
+        let response = await fetch("https://linkverifier-2.onrender.com/recent");
+        let data = await response.json();
+        let recentList = document.getElementById("recent-list");
 
-            data.recent_urls.forEach((entry) => {
-                let listItem = document.createElement("li");
-                listItem.innerHTML = `<strong>${entry.url}</strong>: 
-                    <span class="${entry.result === "Phishing" ? "phishing" : "safe"}">${entry.result}</span>`;
-                recentList.appendChild(listItem);
-            });
-        } catch (error) {
-            console.error("Error fetching recent URLs:", error);
-        }
+        recentList.innerHTML = ""; // Clear previous list
+
+        // ✅ Display only the last 5 URLs
+        data.recent_urls.slice(-5).forEach((entry) => {
+            let listItem = document.createElement("li");
+            listItem.innerHTML = `<strong>${entry.url}</strong>: 
+                <span class="${entry.result === "Phishing" ? "phishing" : "safe"}">${entry.result}</span>`;
+            recentList.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error("Error fetching recent URLs:", error);
     }
+}
 
-    // ✅ Load recent URLs when the page loads
-    window.onload = loadRecentURLs;
+// ✅ Load recent URLs when the page loads
+window.onload = loadRecentURLs;
+
 </script>
 </head>
 <body>
