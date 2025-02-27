@@ -133,79 +133,84 @@
         border-bottom: none;
     }
     </style>
-    <script>
-   async function checkURL() {
-    let url = document.getElementById("urlInput").value.trim();
-    let resultText = document.getElementById("result");
-    let loadingText = document.getElementById("loading");
-
-    if (!isValidURL(url)) {
-        resultText.innerText = "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)";
-        resultText.className = "error";
-        resultText.style.color = "red";  // Invalid URL in black
-        return;
-    }
-
-    loadingText.style.display = "block";
-    resultText.innerText = "";
-
-    let response = await fetch("https://linkverifier-2.onrender.com/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url }),
-    });
-
-    let result = await response.json();
-    resultText.innerText = " Result: " + result.result;
-
-    if (result.result === "Phishing") {
-        resultText.style.color = "red";  // Phishing in red
-    } else if (result.result === "Legitimate") {
-        resultText.style.color = "green";  // Legitimate in green
-    } else {
-        resultText.style.color = "red";  // Invalid in black
-    }
-
-    loadingText.style.display = "none";
-
-    // ✅ Add only VALID URLs to the recent list
-    if (result.result !== "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)") {
-        loadRecentURLs();
-    }
-}
-
-
-function isValidURL(url) {
-    const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(:\d+)?(\/.*)?$/i;
-    return urlPattern.test(url);
-}
-
-
-// ✅ Properly fetch and display the last 5 recent URLs
-async function loadRecentURLs() {
-    try {
-        let response = await fetch("https://linkverifier-2.onrender.com/recent");
-        let data = await response.json();
-        let recentList = document.getElementById("recent-list");
-
-        recentList.innerHTML = ""; // Clear previous list
-
-        // ✅ Display only the last 5 URLs
-        data.recent_urls.slice(-5).forEach((entry) => {
-            let listItem = document.createElement("li");
-            listItem.innerHTML = `<strong>${entry.url}</strong>: 
-                <span class="${entry.result === "Phishing" ? "phishing" : "safe"}">${entry.result}</span>`;
-            recentList.appendChild(listItem);
-        });
-    } catch (error) {
-        console.error("Error fetching recent URLs:", error);
-    }
-}
-
-// ✅ Load recent URLs when the page loads
-window.onload = loadRecentURLs;
-
-</script>
+   <script>
+    async function checkURL() {
+     let url = document.getElementById("urlInput").value.trim();
+     let resultText = document.getElementById("result");
+     let loadingText = document.getElementById("loading");
+ 
+     if (!isValidURL(url)) {
+         resultText.innerText = "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)";
+         resultText.className = "error";
+         resultText.style.color = "red";  // Invalid URL in red
+         return;
+     }
+ 
+     loadingText.style.display = "block";
+     resultText.innerText = "";
+ 
+     let response = await fetch("https://linkverifier-2.onrender.com/predict", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ url: url }),
+     });
+ 
+     let result = await response.json();
+     resultText.innerText = " Result: " + result.result;
+ 
+     if (result.result === "Phishing") {
+         resultText.style.color = "red";  // Phishing in red
+     } else if (result.result === "Legitimate") {
+         resultText.style.color = "green";  // Legitimate in green
+     } else {
+         resultText.style.color = "red";  // Invalid in red
+     }
+ 
+     loadingText.style.display = "none";
+ 
+     // ✅ Add only VALID URLs to the recent list
+     if (result.result !== "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)") {
+         loadRecentURLs();
+     }
+ }
+ 
+ /**
+  * ✅ Strict URL Validation Function
+  * Ensures:
+  * - Starts with http:// or https://
+  * - Contains a valid domain (e.g., google.com)
+  * - Has a valid top-level domain (.com, .org, .net, etc.)
+  */
+ function isValidURL(url) {
+     const urlPattern = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(:\d+)?(\/.*)?$/;
+     return urlPattern.test(url);
+ }
+ 
+ // ✅ Properly fetch and display the last 5 recent URLs
+ async function loadRecentURLs() {
+     try {
+         let response = await fetch("https://linkverifier-2.onrender.com/recent");
+         let data = await response.json();
+         let recentList = document.getElementById("recent-list");
+ 
+         recentList.innerHTML = ""; // Clear previous list
+ 
+         // ✅ Display only the last 5 URLs
+         data.recent_urls.slice(-5).forEach((entry) => {
+             let listItem = document.createElement("li");
+             listItem.innerHTML = `<strong>${entry.url}</strong>: 
+                 <span class="${entry.result === "Phishing" ? "phishing" : "safe"}">${entry.result}</span>`;
+             recentList.appendChild(listItem);
+         });
+     } catch (error) {
+         console.error("Error fetching recent URLs:", error);
+     }
+ }
+ 
+ // ✅ Load recent URLs when the page loads
+ window.onload = loadRecentURLs;
+ </script>
+ 
 </head>
 <body>
     <div id="container">
