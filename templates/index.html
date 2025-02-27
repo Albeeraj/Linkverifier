@@ -157,8 +157,8 @@
         let result = await response.json();
         resultText.innerText = " Result: " + result.result;
 
-        if (result.result === "❌ Invalid URL Format") {
-            resultText.style.color = "black";  // ✅ Invalid URL in black
+        if (result.result === "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)") {
+            resultText.style.color = "red";  // ✅ Invalid URL in black
         } else if (result.result === "Phishing") {
             resultText.style.color = "red";  // ✅ Phishing in red
         } else {
