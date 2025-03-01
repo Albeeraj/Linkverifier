@@ -182,9 +182,33 @@
   * - Top-level domain (TLD) must be at least **two characters** (e.g., `.com`, `.org`, `.net`)
   */
   function isValidURL(url) {
-    const urlPattern = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/i;
-    return urlPattern.test(url);
+    try {
+        let urlObj = new URL(url);
+        let hostname = urlObj.hostname;
+
+        // ✅ Ensure there's at least one dot in the domain
+        if (!hostname.includes(".")) return false;
+
+        // ✅ Extract domain parts
+        let parts = hostname.split(".");
+        let tld = parts[parts.length - 1];
+
+        // ✅ List of valid TLDs (expandable)
+        const validTLDs = new Set([
+            "com", "org", "net", "edu", "gov", "in", "co.in", "uk", "us", "io", "info", "biz"
+        ]);
+
+        // ✅ Check if TLD is valid
+        if (!validTLDs.has(tld) && !validTLDs.has(parts.slice(-2).join("."))) {
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        return false; // Invalid URL format
+    }
 }
+
  // ✅ Properly fetch and display the last 5 recent URLs
  async function loadRecentURLs() {
      try {
