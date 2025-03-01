@@ -175,14 +175,14 @@
  }
  
  /**
-  * ✅ Strict URL Validation Function
-  * Ensures:
+  * ✅ Improved URL Validation
   * - Starts with http:// or https://
   * - Contains a valid domain (e.g., google.com)
-  * - Has a valid top-level domain (.com, .org, .net, etc.)
+  * - Ensures at least one dot after the main domain
+  * - Top-level domain (TLD) must be at least **two characters** (e.g., `.com`, `.org`, `.net`)
   */
  function isValidURL(url) {
-     const urlPattern = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(:\d+)?(\/.*)?$/;
+     const urlPattern = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/;
      return urlPattern.test(url);
  }
  
@@ -209,8 +209,7 @@
  
  // ✅ Load recent URLs when the page loads
  window.onload = loadRecentURLs;
- </script>
- 
+ </script> 
 </head>
 <body>
     <div id="container">
