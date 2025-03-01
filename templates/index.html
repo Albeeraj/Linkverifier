@@ -181,11 +181,10 @@
   * - Ensures at least one dot after the main domain
   * - Top-level domain (TLD) must be at least **two characters** (e.g., `.com`, `.org`, `.net`)
   */
- function isValidURL(url) {
-     const urlPattern = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/;
-     return urlPattern.test(url);
- }
- 
+  function isValidURL(url) {
+    const urlPattern = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/i;
+    return urlPattern.test(url);
+}
  // ✅ Properly fetch and display the last 5 recent URLs
  async function loadRecentURLs() {
      try {
