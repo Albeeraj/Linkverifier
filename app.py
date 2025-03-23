@@ -34,7 +34,9 @@ def extract_features(url: str):
         "Right_Click": 1,
         "Web_Forwards": 0
     }
+    print(f"Extracted features for {url}: {features}")  # ✅ Debugging
     return features
+
 
 # Prediction function with Safe List Check
 def predict_url(url: str):

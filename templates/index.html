@@ -193,21 +193,17 @@
         let parts = hostname.split(".");
         let tld = parts[parts.length - 1];
 
-        // ✅ List of valid TLDs (expandable)
-        const validTLDs = new Set([
-            "com", "org", "net", "edu", "gov", "in", "co.in", "uk", "us", "io", "info", "biz"
-        ]);
-
-        // ✅ Check if TLD is valid
-        if (!validTLDs.has(tld) && !validTLDs.has(parts.slice(-2).join("."))) {
+        // ✅ Allow all URLs to be checked except obviously broken ones
+        if (tld.length < 2 || hostname.length < 5) {
             return false;
         }
 
         return true;
     } catch (error) {
-        return false; // Invalid URL format
+        return false;  // Fully broken URL gets rejected
     }
 }
+
 
  // ✅ Properly fetch and display the last 5 recent URLs
  async function loadRecentURLs() {
