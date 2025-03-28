@@ -34,7 +34,7 @@ def extract_features(url: str):
         "Right_Click": 1,
         "Web_Forwards": 0
     }
-    print(f"Extracted features for {url}: {features}")  # ✅ Debugging
+    print(f"Extracted features for {url}: {features}")  #  Debugging
     return features
 
 
@@ -66,7 +66,7 @@ import re  # Import Regular Expressions for URL validation
 def predict(data: dict):
     url = data.get("url", "").strip()
     
-    # ✅ URL Validation
+    #  URL Validation
     url_pattern = re.compile(
         r'^(https?:\/\/)?'  # http:// or https:// (optional)
         r'([\da-z\.-]+)\.([a-z\.]{2,6})'  # Domain name
@@ -75,13 +75,13 @@ def predict(data: dict):
     if not url_pattern.match(url):
         return {"result": "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)"}
 
-    # ✅ Perform phishing check
+    #  Perform phishing check
     result = predict_url(url)
 
-    # ✅ Store only last 5 checked URLs (excluding invalid)
-    if result["result"] != "⚠️ Enter a valid URL, including path (e.g., https://example.com/path)":
+    #  Store only last 5 checked URLs (excluding invalid)
+    if result["result"] != " Enter a valid URL, including path (e.g., https://example.com/path)":
         recent_urls.insert(0, {"url": url, "result": result["result"]})
-        if len(recent_urls) > 5:  # ✅ Now storing only the last 5 URLs
+        if len(recent_urls) > 5:  #  Now storing only the last 5 URLs
             recent_urls.pop()
 
     return result

@@ -6,28 +6,32 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, classification_report
 import joblib
 
-# Step 1: Load the Dataset
+# Load the dataset
 df = pd.read_csv("feature.csv")
 
-# Step 2: Drop 'Domain' column if it exists (since it's text)
+# Remove non-existent domains before training
+df = df[df['validDomain'] == 1]
+df = df.drop(columns=['validDomain'])
+
+# Drop 'Domain' column if it exists
 if 'Domain' in df.columns:
     df = df.drop(columns=['Domain'])
 
-# Step 3: Check if 'label' column exists, if not, raise an error
+# Ensure 'label' column exists
 if 'label' not in df.columns:
     raise ValueError("ERROR: 'label' column is missing in dataset! Ensure each row has a phishing (1) or legitimate (0) label.")
 
-# Step 4: Convert all features to numeric and handle missing values
+# Convert all features to numeric and handle missing values
 df = df.apply(pd.to_numeric, errors='coerce').dropna()
 
-# Step 5: Separate Features (X) and Labels (y)
-X = df.drop(columns=["label"])  
+# Separate features and labels
+X = df.drop(columns=["label"])
 y = df["label"]
 
-# Step 6: Split Data into Training & Testing Sets
+# Split data into training & testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Step 7: Train Models
+# Train multiple models
 models = {
     "Decision Tree": DecisionTreeClassifier(),
     "Random Forest": RandomForestClassifier(n_estimators=100),
@@ -42,18 +46,18 @@ for name, model in models.items():
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
-    
+
     print(f"Model: {name}")
     print("Accuracy:", accuracy)
     print(classification_report(y_test, y_pred))
     print("-" * 50)
-    
+
     if accuracy > best_accuracy:
         best_accuracy = accuracy
         best_model = model
         best_name = name
 
-# Step 8: Save the Best Model
+# Save the best model
 joblib.dump(best_model, "best_phishing_model.pkl")
 print(f"Best Model: {best_name} with Accuracy: {best_accuracy}")
-print("Best model saved as 'best_phishing_model.pkl'")
+print("Best model saved as 'best_phishing_model.pkl'.")

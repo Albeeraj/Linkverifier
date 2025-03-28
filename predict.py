@@ -1,35 +1,34 @@
-import joblib
 import pandas as pd
+import joblib
+import socket
+
+# Function to check if a domain exists
+def is_valid_domain(domain):
+    """Check if a domain has a valid DNS record."""
+    try:
+        socket.gethostbyname(domain)
+        return 1  # Valid domain
+    except socket.gaierror:
+        return 0  # Invalid domain
 
 # Load the trained model
 model = joblib.load("best_phishing_model.pkl")
 
-# Function to take a new URL's extracted features and predict
-def predict_url(features):
-    df = pd.DataFrame([features])  # Convert input into DataFrame
-    prediction = model.predict(df)[0]  # Get prediction
-    return "Phishing" if prediction == 1 else "Legitimate"
+# Ask for user input
+input_url = input("Enter a URL: ")
 
-# Example new URL features (Replace with real extracted features)
-new_url_features = {
-    "Have_IP": 1,
-    "Have_At": 0,
-    "URL_Length": 50,
-    "URL_Depth": 3,
-    "Redirection": 0,
-    "https_Domain": 0,
-    "TinyURL": 1,
-    "Prefix/Suffix": 1,
-    "DNS_Record": 0,
-    "Web_Traffic": 1,
-    "Domain_Age": 1,
-    "Domain_End": 0,
-    "iFrame": 0,
-    "Mouse_Over": 1,
-    "Right_Click": 0,
-    "Web_Forwards": 0
-}
+# Check if the domain is valid
+if is_valid_domain(input_url) == 0:
+    print("Invalid website: This domain does not exist.")
+else:
+    # Extract features (assuming function `extract_features` exists)
+    features = extract_features(input_url)  
+    features_df = pd.DataFrame([features])
 
-# Predict if the URL is phishing or legitimate
-result = predict_url(new_url_features)
-print(f"Prediction: {result}")
+    # Predict using the trained model
+    prediction = model.predict(features_df)
+
+    if prediction == 1:
+        print("Phishing website detected!")
+    else:
+        print("Legitimate website.")
